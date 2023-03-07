@@ -1,9 +1,31 @@
-
     // Create Dino Constructor
+    function DinoContructor(species, weight, height, diet,
+         where, when, fact){
+        this.species = species;
+        this.weight = weight;
+        this.height = height;
+        this.diet = diet;
+        this.where = where;
+        this.when = when;
+        this.fact = fact
+    }
 
-
+    //Load Dino from dino.json "./dino.json"
     // Create Dino Objects
+    const dinoArr = [];
+    const getDataJson= () => {
+      return fetch("./clsdino.json")
+        .then((res) => res.json())
+        .then((data) => {
+          return data.Dinos.map((dino) => dinoArr.push(new DinoContructor(dino.species, dino.weight, dino.height,
+                                                            dino.diet, dino.where, dino.when, dino.fact)));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
 
+    console.log(dinoArr);
 
     // Create Human Object
 
@@ -24,7 +46,7 @@
 
     // Generate Tiles for each Dino in Array
   
-        // Add tiles to DOM
+    // Add tiles to DOM
 
     // Remove form from screen
 
