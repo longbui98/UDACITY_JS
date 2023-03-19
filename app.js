@@ -13,19 +13,31 @@
     //Load Dino from dino.json "./dino.json"
     // Create Dino Objects
     const dinoArr = [];
-    const getDataJson= () => {
-      return fetch("./clsdino.json")
-        .then((res) => res.json())
-        .then((data) => {
-          return data.Dinos.map((dino) => dinoArr.push(new DinoContructor(dino.species, dino.weight, dino.height,
-                                                            dino.diet, dino.where, dino.when, dino.fact)));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-
-    console.log(dinoArr);
+    const getDataJson = () => {
+    return fetch("./dino.json")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+          return data.Dinos.map((dino) =>
+            dinoArr.push(
+              new DinoContructor(
+              dino.species,
+              dino.weight,
+              dino.height,
+              dino.diet,
+              dino.where,
+              dino.when,
+              dino.fact
+            )
+          )
+        );
+      })
+      .then(() => console.log(dinoArr))
+      .catch((error) => {
+        console.log(error);
+    });
+  };
+  getDataJson();
 
     // Create Human Object
 
