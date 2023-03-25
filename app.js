@@ -40,10 +40,32 @@
   getDataJson();
 
     // Create Human Object
+    function HumanContructor(name, height, weight, diet){
+      this.name = name;
+      this.height = height;
+      this.weight = weight;
+      this.diet = diet;
+    }   
 
-    // Use IIFE to get human data from form
+    const humanObject = new HumanContructor();
+    // Use IIFE to get human data from form        
+    const listener = document.getElementById("btn");
+    listener.addEventListener("click", function() {
+      (function() {
+        const nameInput = document.getElementById("name").value;
+        const weight = document.getElementById("weight").value * 0.453;
+        const height = document.getElementById("feet").value * 30.48 + document.getElementById("inches").value * 2.54;
+        const diet = document.getElementById("diet").value;
 
+        humanObject.name = nameInput;
+        humanObject.weight = weight;
+        humanObject.height = height;
+        humanObject.diet = diet;
+      })();
+    });
+    
 
+    console.log(humanObject);
     // Create Dino Compare Method 1
     // NOTE: Weight in JSON file is in lbs, height in inches. 
 
@@ -61,6 +83,6 @@
     // Add tiles to DOM
 
     // Remove form from screen
-
+    
 
 // On button click, prepare and display infographic
