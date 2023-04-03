@@ -1,12 +1,11 @@
+const { human } = require("i/lib/inflections");
+
 // Create Dino Constructor
-function DinoContructor(species, weight, height, diet,
-  imageUrl, fact) {
+function DinoContructor(species, weight, height, diet) {
   this.species = species;
   this.weight = weight;
   this.height = height;
   this.diet = diet;
-  this.imageUrl = imageUrl;
-  this.fact = fact
 }
 
 DinoContructor.prototype.generateFacts = function () {
@@ -15,12 +14,12 @@ DinoContructor.prototype.generateFacts = function () {
 }
 
 //Load Dino from dino.json "./dino.json"
-let dinos = [];
-const getDataJson = async () => {
+const getDinoDataJson = async () => {
   const jsonData = await fetch("./dino.json");
-  dinos = jsonData.Dinos.map(value => {
-    new DinoContructor(value.species, value.weight, value.height, value.imageUrl, value.fact)
+  const dinos = jsonData.Dinos.map(value => {
+    return new DinoContructor(value.species, value.weight, value.height, value.diet, value.imagesUrl);
   })
+  generateAndDisplayTitle(dinos);
 };
 
 // Create Human Object
@@ -31,7 +30,10 @@ function HumanContructor(name, height, weight, diet) {
   this.diet = diet;
 }
 
-// Use IIFE to get human data from form        
+//Create Dino Object
+let dino = new DinoContructor();
+
+// Use IIFE to get human data from form         
 const getHumanData = (function () {
   return function () {
     const name = document.getElementById("name").value;
@@ -42,6 +44,8 @@ const getHumanData = (function () {
     return new HumanContructor(name, weight, height, diet);
   }
 })();
+
+const human = getHumanData();
 // Create Dino Compare Method 1
 // NOTE: Weight in JSON file is in lbs, height in inches. 
 DinoContructor.prototype.compareWeight = (weight) => {
@@ -85,35 +89,63 @@ DinoContructor.prototype.compareDiet = (diet) => {
 }
 
 // On button click, prepare and display infographic
-document.getElementById("btn").addEventListener("onClick", function () {
-  const humanObj = getHumanData();
-  dinos.forEach(dino => {
-    dino.compareWeight(humanObj.weight);
-    dino.compareHeight(humanObj.height);
-    dino.compareDiet(humanObj.diet);
-  });
-  document.getElementById("dino-compare").style.display = "none";
+const generateAndDisplayTitle = (dinosArray) => {
+  let updateDinoArray = [];
+  const fixedArray = [1, 1, 1, 0, 0, 0, 0];
 
-  for (let dinoIndex in dinos) {
-    let dino = dinos[dinoIndex];
-    let fact = dino.generateFacts();
+  shuffle(fixedArray);
 
-    if (dino.weight < 1) {
-      fact = "We have all birds are dinosaurs";
+  let getPigeonIndex = dinosArray.findIndex(index => index.species === 'Piegon');
+  fixedArray.splice(getPigeonIndex, 0, 0);
+
+  dinosArray.forEach((dinoData, index) => {
+    dino.species = dinoData.species;
+    dino.height = dino.height;
+    dino.weight = dinoData.weight;
+    dino.diet = dinoData.diet;
+    dino.imagesUrl = dinoData.imagesUrl;
+    //Check whether we get to the index that we use three methods that we created above
+    if (fixedArray[index]) {
+      let generateRandomNumber = Math.floor(Math.random() * 3) + 1;
+      if (dinoData instanceof HumanContructor) {
+        generateRandomNumber = -1;
+      }
+      switch (generateRandomNumber) {
+        case 1:
+          dino.compareHeight(dinoData.height);
+          break;
+        case 2:
+          dino.compareWeight(dinoData.weight);
+          break;
+        case 3:
+          dino.compareDiet(dinoData.diet);
+          break;
+        default:
+          break;
+      }
+    } else {
+      dino.fact = dinoData.fact;
     }
+    updateDinoArray.push(JSON.parse(JSON.stringify(dino)));
+  })
+  //Append human data into the middle of the grid
+  updateDinoArray.splice(4, 0, human);
+  updateDinoArray.forEach((updateGrid) => {
+    addTitleToDom(updateGrid.species, updateGrid.imagesUrl, updateGrid.facts);
+  })
+}
 
-    let gridData = addTitleToDom(dino.species, dino.image, dino.fact);
-    document.getElementById("grid").appendChild(gridData);
-
-    if (dinoIndex === 4) {
-      let humanTitleDiv = addTitleToDom(humanObj.species, humanObj.imageUrl);
-
-      document.getElementById("grid").appendChild(humanTitleDiv);
-    }
+//Algorithm for shuffling array
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
   }
-  document.getElementById("dino-compare").style.display = "none";
-})
-
+  return a;
+}
 
 // Add tiles to DOM
 const addTitleToDom = function (species, imagesUrl, facts) {
@@ -137,7 +169,20 @@ const addTitleToDom = function (species, imagesUrl, facts) {
 
   return gridItemDiv;
 }
-// Generate Tiles for each Dino in Array
-
-
 // Remove form from screen
+function removeForm() {
+  const form = document.querySelector('#dino-compare');
+  form.style.display = "none";
+}
+// Function to get data from dino.json, human data and remove form when user click
+function compare() {
+
+  getDinoDataJson();
+
+  getHumanData;
+
+  removeForm();
+}
+
+const compare_button = document.querySelector('#btn');
+compare_button.addEventListener('click', compare); 
