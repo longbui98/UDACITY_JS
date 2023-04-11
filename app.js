@@ -1,5 +1,3 @@
-const { human } = require("i/lib/inflections");
-
 // Create Dino Constructor
 function DinoContructor(species, weight, height, diet) {
   this.species = species;
